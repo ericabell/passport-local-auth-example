@@ -7,6 +7,7 @@ const session = require('express-session');
 
 // our routes
 let extra = require('./routes/extra');
+let auth = require('./routes/auth');
 
 // we have to have an express app...
 let app = express();
@@ -99,41 +100,9 @@ const requireLogin = function(req, res, next) {
 }
 
 // BEGIN ROUTES
-
-// useful for seeing what req.user is and any cookies the browser sent to us
-app.get('/', (req, res) => {
-  console.log(req.cookies);
-  // we might not always be authenticated, so an if is required
-  if( req.user ) {
-    console.log(`req.user: ${req.user}`);
-    console.log(`req.user.username: ${req.user.username}`);
-    console.log(`req.user.password: ${req.user.password}`);
-    console.log(`req.session.passport.user: ${req.session.passport.user}`);
-  }
-  res.send('hello');
-});
-
-// send the login form to the user
-app.get('/login', (req, res) => {
-  res.sendFile('/Users/eabell/sandbox/passport-local-auth-example/public/login.html')
-})
-
-// this is where the login form posts to
-// we can also tell passport where to go if login passed or failed
-app.post('/login',
-  passport.authenticate('local', { successRedirect: '/',
-                                   failureRedirect: '/login',
-                                 })
-);
-
-// this is our protected route because of the requireLogin middleware
-app.get('/secret', requireLogin, (req, res, next) => {
-  res.send('you have reached the protect page!');
-})
-
-
-// extra routes
+app.use('/', auth);
 app.use('/', extra);
+
 
 app.listen(3000, () => {
   console.log('listen 3000');
