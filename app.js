@@ -5,6 +5,9 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
+// our routes
+let extra = require('./routes/extra');
+
 // we have to have an express app...
 let app = express();
 
@@ -128,6 +131,9 @@ app.get('/secret', requireLogin, (req, res, next) => {
   res.send('you have reached the protect page!');
 })
 
+
+// extra routes
+app.use('/', extra);
 
 app.listen(3000, () => {
   console.log('listen 3000');
